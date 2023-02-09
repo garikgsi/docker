@@ -1,0 +1,90 @@
+version: "3"
+
+networks:
+  lan:
+    driver: bridge
+
+services:
+
+  php-fpm:
+    build: 
+      dockerfile: php-fpm/Dockerfile
+      args:
+        - PHP_FPM_PORT=${PHP_FPM_PORT}
+        - PHP_VER=${PHP_VER}
+    volumes:
+        - ${PROJECT_HOME_DIR}:/var/www:cached
+    ports:
+      - 9000:${PHP_FPM_PORT}
+      - 9003:9003
+      - 22:22
+    networks:
+      - lan
+
+  nginx:
+    build:
+      dockerfile: nginx/Dockerfile
+      args:
+        - PHP_UPSTREAM_CONTAINER=php-fpm
+        - PHP_UPSTREAM_PORT=${PHP_FPM_PORT}
+    volumes:
+      - ${PROJECT_HOME_DIR}:/var/www
+    ports:
+      - ${WWW_PORT}:80
+      - ${HTTPS_WWW_PORT}:443
+    depends_on:
+      - php-fpm
+    networks:
+      - lan
+
+  pgsql:
+    build: 
+      dockerfile: pgsql/Dockerfile
+      args:
+        - PSQL_DB=${PSQL_DB}
+        - PSQL_USER=${PSQL_USER}
+        - PSQL_PASSWORD=${PSQL_PASSWORD}
+    environment:
+      - POSTGRES_DB=${PSQL_DB}
+      - POSTGRES_USER=${PSQL_USER}
+      - POSTGRES_PASSWORD=${PSQL_PASSWORD}
+    volumes:
+        - ${PSQL_DATA}:/var/lib/postgresql/data
+        - ./pgsql/${PSQL_INITDB}:/docker-entrypoint-initdb.d/
+    ports:
+      - "${PSQL_PORT}:5432"
+    networks:
+      - lan    
+
+  mysql:
+    build:
+      dockerfile: mysql/Dockerfile
+      args:
+        - MYSQL_VERSION=${MYSQL_VERSION}
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - ${MYSQL_DATA}:/var/lib/mysql
+      - ./mysql/${MYSQL_INITDB}:/docker-entrypoint-initdb.d
+    ports:
+      - "${MYSQL_PORT}:3306"
+    networks:
+      - lan
+
+  redis:
+    build: 
+      dockerfile: redis/Dockerfile
+    volumes:
+      - ${REDIS_DATA}:/data
+    command: --requirepass ${REDIS_PASSWORD}
+    ports:
+      - "${REDIS_PORT}:6379"
+    networks:
+      - lan
+
+# run:
+# docker-compose build
+# docker-compose up
