@@ -1,26 +1,35 @@
 # Сборка Docker для разработки 
-Внутри MySQL, PostgreSQL, Redis, PHP с установленными расширениями, xdebug и phalcon
+<p>Внутри MySQL, PostgreSQL, Redis, PHP с установленными расширениями, xdebug и phalcon</p>
 
 ## Настройки
-Основные настройки - через .env файл
+<p>Основные настройки - через .env файл</p>
 
 ## Хранение данных
 ### Сайт
-/data/site
+<p>Разработку кладем сюда   ->  /data/site</p>
 
 ### Базы данных
-MySQL       \data\db\mysql
-PostgreSQL  \data\db\pgsql
-Redis       \data\db\redis
+<p>MySQL       ->   \data\db\mysql</p>
+<p>PostgreSQL  ->   \data\db\pgsql</p>
+<p>Redis       ->   \data\db\redis</p>
+
+
+
 
 ### Инициализация данных СУБД
-MySQL       \mysql\initdb.d
-PostgreSQL  \pgsql\initdb.d
+<p>MySQL       ->   \mysql\initdb.d</p>
+<p>PostgreSQL  ->   \pgsql\initdb.d</p>
+
+
+
 
 ## Расширения PHP, composer и т.д.
-Контейнер php-fpm
-SSH доступен после старта сервиса #service ssh start
+<p>Контейнер php-fpm</p>
+<p>SSH доступен после старта сервиса</p>
+<code>#service ssh start</code>
+<p>Для доступа создан пользователь docker с паролем docker</p>
 
 ## Запуск
-$ docker-compose build
-$ docker-compose up
+<code>$ docker-compose build</code>
+<code>$ docker-compose up</code>
+
